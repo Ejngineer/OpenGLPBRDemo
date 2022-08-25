@@ -1621,13 +1621,14 @@
     <None Include="shaders\CubeMapVert.glsl" />
     <None Include="shaders\HDRFRAG.glsl" />
     <None Include="shaders\HDRVERT.glsl" />
-    <None Include="shaders\IBLFrag.glsl" />
+    <None Include="shaders\IBLTextureFrag.glsl" />
     <None Include="shaders\IBLVert.glsl" />
     <None Include="shaders\PBRFrag.glsl" />
     <None Include="shaders\PBRTextureFrag.glsl" />
     <None Include="shaders\PBRTextureVert.glsl" />
     <None Include="shaders\PBRVert.glsl" />
     <None Include="shaders\preFilterFrag.glsl" />
+    <None Include="shaders\IBLFrag.glsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dependencies\glm\detail\glm.cpp">
@@ -1687,5 +1688,76 @@
     <ClCompile Include="src\VertexBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="textures\2k_neptune.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="textures\2k_uranus.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="textures\awesomeface.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="textures\bricks2.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="textures\bricks2_disp.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="textures\bricks2_normal.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="textures\brickwall.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="textures\brickwall_normal.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="textures\container.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="textures\container2.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="textures\container2_specular.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="textures\grass.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="textures\marble.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="textures\metal.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="textures\toy_box_diffuse.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="textures\toy_box_disp.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="textures\toy_box_normal.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="textures\wood.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="textures\pbr\albedo.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="textures\pbr\ao.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="textures\pbr\metallic.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="textures\pbr\normal.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="textures\pbr\roughness.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

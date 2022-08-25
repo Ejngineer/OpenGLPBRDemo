@@ -168,9 +168,16 @@ int main(void)
 	Sphere sphere(1.0f, 72, 36, true);
 	Cube cube(1.0f, 1.0f, 1.0f);
 
+	glm::vec3 color(1.0f);
+	float metallic = 0.0f;
+	float roughness = 0.05f;
+	float ao = 0.0f;
+	bool textured = false;
+
 	/*Shaders*/
-	Shader shaderPBR("shaders/PBRvert.glsl", "shaders/PBRfrag.glsl");
-	Shader shaderPBRText("shaders/PBRTextureVert.glsl", "shaders/PBRTextureFrag.glsl");
+	Shader shaderIBL("shaders/IBLvert.glsl", "shaders/IBLfrag.glsl");
+	//Shader shaderPBRText("shaders/PBRTextureVert.glsl", "shaders/PBRTextureFrag.glsl");
+	Shader shaderIBLText("shaders/IBLVert.glsl", "shaders/IBLTextureFrag.glsl");
 
 	Shader shaderHDR("shaders/hdrvert.glsl", "shaders/hdrfrag.glsl");
 	Shader cubeMapShader("shaders/cubemapvert.glsl", "shaders/cubemapfrag.glsl");
@@ -192,12 +199,12 @@ int main(void)
 
 	stbi_set_flip_vertically_on_load(0);
 
-	shaderPBRText.use();
-	shaderPBRText.setInt("Albedo", 0);
-	shaderPBRText.setInt("normalMap", 1);
-	shaderPBRText.setInt("Metallic", 2);
-	shaderPBRText.setInt("Roughness", 3);
-	shaderPBRText.setInt("AO", 4);
+	shaderIBLText.use();
+	shaderIBLText.setInt("Albedo", 0);
+	shaderIBLText.setInt("normalMap", 1);
+	shaderIBLText.setInt("Metallic", 2);
+	shaderIBLText.setInt("Roughness", 3);
+	shaderIBLText.setInt("AO", 4);
 	
 	ironalbedo.Bind2D();
 	ironalbedo.LoadTexture2D("textures/pbr/albedo.png");
@@ -209,17 +216,6 @@ int main(void)
 	ironrough.LoadTexture2D("textures/pbr/roughness.png");
 	ironao.Bind2D();
 	ironao.LoadTexture2D("textures/pbr/ao.png");
-	
-	//ironalbedo.Bind2D();
-	//ironalbedo.LoadTexture2D("textures/pbr/rounded-brick1-albedo.png");
-	//ironnorm.Bind2D();
-	//ironnorm.LoadTexture2D("textures/pbr/rounded-brick1-normal-ogl.png");
-	//ironmetallic.Bind2D();
-	//ironmetallic.LoadTexture2D("textures/pbr/rounded-brick1-metallic.png");
-	//ironrough.Bind2D();
-	//ironrough.LoadTexture2D("textures/pbr/rounded-brick1-roughness.png");
-	//ironao.Bind2D();
-	//ironao.LoadTexture2D("textures/pbr/rounded-brick1-ao.png");
 
 	unsigned int captureFBO, captureRBO;
 	glGenFramebuffers(1, &captureFBO);
@@ -254,7 +250,7 @@ int main(void)
 			glm::lookAt(glm::vec3(0.0f,0.0f,0.0f), glm::vec3(0.0f, -1.0f,  0.0f), glm::vec3(0.0f,  0.0f, -1.0f)),
 			glm::lookAt(glm::vec3(0.0f,0.0f,0.0f), glm::vec3(0.0f,  0.0f,  1.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
 			glm::lookAt(glm::vec3(0.0f,0.0f,0.0f), glm::vec3(0.0f,  0.0f, -1.0f), glm::vec3(0.0f, -1.0f,  0.0f))
-		};
+	};
 
 	shaderHDR.use();
 	shaderHDR.setInt("hdrTexture", 0);
@@ -390,11 +386,6 @@ int main(void)
 	cubeMapShader.use();
 	cubeMapShader.setInt("cubeMap", 0);
 
-	shaderPBR.use();
-	shaderPBR.setInt("irradianceMap", 5);
-	shaderPBR.setInt("prefilterMap", 6);
-	shaderPBR.setInt("brdfLUT", 7);
-
 	ImGui::CreateContext();
 
 	ImGui::StyleColorsDark();
@@ -402,12 +393,6 @@ int main(void)
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init("#version 330");
 	
-	glm::vec3 color(1.0f);
-	float metallic = 0.0f;
-	float roughness = 0.05f;
-	float ao = 0.0f;
-	bool textured = false;
-
 	std::vector<glm::vec3> lightColors(4, glm::vec3(0.0f));
 	std::vector<glm::vec3> lightPositions(4, glm::vec3(0.0f));
 
@@ -437,18 +422,33 @@ int main(void)
 		glm::mat4 view = camera.GetViewMatrix();
 		glm::mat4 projection = glm::perspective(glm::radians(fov), 1200.0f / 900.0f, 0.1f, 100.f);
 
+		if (textured)
+		{
+			shaderIBLText.use();
+			shaderIBLText.setInt("irradianceMap", 5);
+			shaderIBLText.setInt("prefilterMap", 6);
+			shaderIBLText.setInt("brdfLUT", 7);
+		}
+		else
+		{
+			shaderIBL.use();
+			shaderIBL.setInt("irradianceMap", 5);
+			shaderIBL.setInt("prefilterMap", 6);
+			shaderIBL.setInt("brdfLUT", 7);
+		}
+
 		/*Options to modify model color*/
 		ImGui::Begin("Model Options");
 			ImGui::Checkbox("Texture", &textured);
 			
 			if (textured)
 			{
-				shaderPBRText.use();
-				shaderPBRText.setMat4f("model", model);
-				shaderPBRText.setMat4f("view", view);
-				shaderPBRText.setMat4f("projection", projection);
-				shaderPBRText.setVec3f("camPos", camera.GetPosition());
-				shaderPBRText.setFloat1f("Divisions", 1.0f);
+				shaderIBLText.use();
+				shaderIBLText.setMat4f("model", model);
+				shaderIBLText.setMat4f("view", view);
+				shaderIBLText.setMat4f("projection", projection);
+				shaderIBLText.setVec3f("camPos", camera.GetPosition());
+				shaderIBLText.setFloat1f("Divisions", 1.0f);
 
 				ironalbedo.ActivateTexture(0);
 				ironalbedo.Bind2D();
@@ -468,16 +468,16 @@ int main(void)
 				ImGui::SliderFloat("Roughness", &roughness, 0.05f, 1.0f, "%.5f");
 				ImGui::SliderFloat("Ambient Occlusion", &ao, 0.0f, 100.0f);
 
-				shaderPBR.use();
-				shaderPBR.setMat4f("model", model);
-				shaderPBR.setMat4f("view", view);
-				shaderPBR.setMat4f("projection", projection);
-				shaderPBR.setVec3f("camPos", camera.GetPosition());
-				shaderPBR.setVec3f("Albedo", color);
-				shaderPBR.setFloat1f("Metallic", metallic);
-				shaderPBR.setFloat1f("Roughness", roughness);
-				shaderPBR.setFloat1f("AO", ao);
-				shaderPBR.setFloat1f("Divisions", 1.0f);
+				shaderIBL.use();
+				shaderIBL.setMat4f("model", model);
+				shaderIBL.setMat4f("view", view);
+				shaderIBL.setMat4f("projection", projection);
+				shaderIBL.setVec3f("camPos", camera.GetPosition());
+				shaderIBL.setVec3f("Albedo", color);
+				shaderIBL.setFloat1f("Metallic", metallic);
+				shaderIBL.setFloat1f("Roughness", roughness);
+				shaderIBL.setFloat1f("AO", ao);
+				shaderIBL.setFloat1f("Divisions", 1.0f);
 			}
 
 			sphere.Draw();
@@ -498,13 +498,13 @@ int main(void)
 
 				if (textured)
 				{
-					shaderPBRText.setVec3f("lightPositions[" + std::to_string(i) + "]", lightPositions[i]);
-					shaderPBRText.setVec3f("lightColors[" + std::to_string(i) + "]", lightColors[i]);
+					shaderIBLText.setVec3f("lightPositions[" + std::to_string(i) + "]", lightPositions[i]);
+					shaderIBLText.setVec3f("lightColors[" + std::to_string(i) + "]", lightColors[i]);
 				}
 				else
 				{
-					shaderPBR.setVec3f("lightPositions[" + std::to_string(i) + "]", lightPositions[i]);
-					shaderPBR.setVec3f("lightColors[" + std::to_string(i) + "]", lightColors[i]);
+					shaderIBL.setVec3f("lightPositions[" + std::to_string(i) + "]", lightPositions[i]);
+					shaderIBL.setVec3f("lightColors[" + std::to_string(i) + "]", lightColors[i]);
 				}
 			}
 		ImGui::End();
@@ -517,12 +517,12 @@ int main(void)
 		glActiveTexture(GL_TEXTURE7);
 		glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
 
-		//cubeMapShader.use();
-		//cubeMapShader.setMat4f("view", view);
-		//cubeMapShader.setMat4f("projection", projection);
-		//glActiveTexture(GL_TEXTURE0);
-		//glBindTexture(GL_TEXTURE_CUBE_MAP, envCubeMap);
-		//cube.Draw();
+		cubeMapShader.use();
+		cubeMapShader.setMat4f("view", view);
+		cubeMapShader.setMat4f("projection", projection);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, envCubeMap);
+		cube.Draw();
 
 		//brdfShader.use();
 		//VAO.Bind();

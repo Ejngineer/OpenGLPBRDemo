@@ -694,6 +694,7 @@
     <None Include="shaders\HDRFRAG.glsl" />
     <None Include="shaders\HDRVERT.glsl" />
     <None Include="shaders\IBLFrag.glsl" />
+    <None Include="shaders\IBLTextureFrag.glsl" />
     <None Include="shaders\IBLVert.glsl" />
     <None Include="shaders\PBRFrag.glsl" />
     <None Include="shaders\PBRTextureFrag.glsl" />
@@ -721,6 +722,31 @@
     <ClCompile Include="src\Vendor\imgui\imgui_widgets.cpp" />
     <ClCompile Include="src\VertexArray.cpp" />
     <ClCompile Include="src\VertexBuffer.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="textures\2k_neptune.jpg" />
+    <Image Include="textures\2k_uranus.jpg" />
+    <Image Include="textures\awesomeface.png" />
+    <Image Include="textures\bricks2.jpg" />
+    <Image Include="textures\bricks2_disp.jpg" />
+    <Image Include="textures\bricks2_normal.jpg" />
+    <Image Include="textures\brickwall.jpg" />
+    <Image Include="textures\brickwall_normal.jpg" />
+    <Image Include="textures\container.jpg" />
+    <Image Include="textures\container2.png" />
+    <Image Include="textures\container2_specular.png" />
+    <Image Include="textures\grass.png" />
+    <Image Include="textures\marble.jpg" />
+    <Image Include="textures\metal.png" />
+    <Image Include="textures\pbr\albedo.png" />
+    <Image Include="textures\pbr\ao.png" />
+    <Image Include="textures\pbr\metallic.png" />
+    <Image Include="textures\pbr\normal.png" />
+    <Image Include="textures\pbr\roughness.png" />
+    <Image Include="textures\toy_box_diffuse.png" />
+    <Image Include="textures\toy_box_disp.png" />
+    <Image Include="textures\toy_box_normal.png" />
+    <Image Include="textures\wood.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -12,11 +12,11 @@ uniform sampler2D brdfLUT;
 
 uniform vec3 camPos;
 
-uniform sampler2D Albedo;
+uniform vec3 Albedo;
 uniform sampler2D normalMap;
-uniform sampler2D Metallic;
-uniform sampler2D Roughness;
-uniform sampler2D AO;
+uniform float Metallic;
+uniform float Roughness;
+uniform float AO;
 
 uniform float Divisions;
 
@@ -85,14 +85,13 @@ float GGX(vec3 N, vec3 V, vec3 L, float k)
 
 void main()
 {
-	vec3 N = getNormalFromMap();
+	vec3 N = Normal;
 	vec3 V = normalize(camPos - WorldPos);
 
-
-	vec3 albedo = pow(texture(Albedo, TexCoords * Divisions).rgb, vec3(2.2));
-	float metallic = texture(Metallic, TexCoords * Divisions).r;
-	float ao = texture(AO, TexCoords * Divisions).r;
-	float textroughness = texture(Roughness, TexCoords * Divisions).r;
+	vec3 albedo = Albedo;
+	float metallic = Metallic;
+	float ao = AO;
+	float textroughness = Roughness;
 
 	float eta = 1.00 / 1.52;
 	vec3 R = reflect(-V, N);
@@ -124,7 +123,7 @@ void main()
 	F0 = mix(F0, albedo, metallic);
 	
 	vec3 Lo = vec3(0.0);
-	for(int i = 0; i < 1; ++i)
+	for(int i = 0; i < 4; ++i)
 	{
 		L = normalize(lightPositions[i] - WorldPos);
 		H = normalize(V + L);
@@ -170,3 +169,4 @@ void main()
 	FragColor = vec4(color, 1.0);
 
 }
+
